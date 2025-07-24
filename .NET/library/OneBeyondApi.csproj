@@ -10,4 +10,8 @@
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.12" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="8.0.12" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\OneBeyond.Core\OneBeyond.Core.csproj" />
+    <ProjectReference Include="..\OneBeyond.Infrastructure\OneBeyond.Infrastructure.csproj" />
+  </ItemGroup>
 </Project>
