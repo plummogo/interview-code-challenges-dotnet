@@ -1,24 +1,21 @@
-﻿using OneBeyondApi.DataAccess;
+﻿using OneBeyond.Core.Dtos;
+using OneBeyondApi.DataAccess;
 using OneBeyondApi.Model;
 
 namespace OneBeyondApi
 {
-    public class SeedData
+    public static class SeedData
     {
-        public static void SetInitialData()
+        public static void SetInitialData(LibraryContext context)
         {
-            var ernestMonkjack = new Author
+            if (context.Authors.Any())
             {
-                Name = "Ernest Monkjack"
-            };
-            var sarahKennedy = new Author
-            {
-                Name = "Sarah Kennedy"
-            };
-            var margaretJones = new Author
-            {
-                Name = "Margaret Jones"
-            };
+                return; // már van adat, nem seedelünk újra
+            }
+
+            var ernestMonkjack = new Author { Name = "Ernest Monkjack" };
+            var sarahKennedy = new Author { Name = "Sarah Kennedy" };
+            var margaretJones = new Author { Name = "Margaret Jones" };
 
             var clayBook = new Book
             {
@@ -56,7 +53,8 @@ namespace OneBeyondApi
                 EmailAddress = "liana@gmail.com"
             };
 
-            var bookOnLoanUntilToday = new BookStock {
+            var bookOnLoanUntilToday = new BookStock
+            {
                 Book = clayBook,
                 OnLoanTo = daveSmith,
                 LoanEndDate = DateTime.Now.Date
@@ -83,28 +81,12 @@ namespace OneBeyondApi
                 LoanEndDate = null
             };
 
-            using (var context = new LibraryContext())
-            {
-                context.Authors.Add(ernestMonkjack);
-                context.Authors.Add(sarahKennedy);
-                context.Authors.Add(margaretJones);
+            context.Authors.AddRange(ernestMonkjack, sarahKennedy, margaretJones);
+            context.Books.AddRange(clayBook, agileBook, rustBook);
+            context.Borrowers.AddRange(daveSmith, lianaJames);
+            context.Catalogue.AddRange(bookOnLoanUntilToday, bookNotOnLoan, bookOnLoanUntilNextWeek, rustBookStock);
 
-
-                context.Books.Add(clayBook);
-                context.Books.Add(agileBook);
-                context.Books.Add(rustBook);
-
-                context.Borrowers.Add(daveSmith);
-                context.Borrowers.Add(lianaJames);
-
-                context.Catalogue.Add(bookOnLoanUntilToday);
-                context.Catalogue.Add(bookNotOnLoan);
-                context.Catalogue.Add(bookOnLoanUntilNextWeek);
-                context.Catalogue.Add(rustBookStock);
-
-                context.SaveChanges();
-
-            }
+            context.SaveChanges();
         }
     }
 }

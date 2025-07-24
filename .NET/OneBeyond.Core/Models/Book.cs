@@ -1,4 +1,6 @@
-﻿namespace OneBeyondApi.Model
+﻿using OneBeyond.Core.Dtos;
+
+namespace OneBeyondApi.Model
 {
     public class Book
     {

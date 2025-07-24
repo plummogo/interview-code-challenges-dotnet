@@ -1,4 +1,4 @@
-﻿namespace OneBeyondApi.Model
+﻿namespace OneBeyond.Core.Dtos
 {
     public enum BookFormat
     {

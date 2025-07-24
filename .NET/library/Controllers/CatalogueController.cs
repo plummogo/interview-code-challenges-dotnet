@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using OneBeyondApi.DataAccess;
 using OneBeyondApi.Model;
-using System.Collections;
 
 namespace OneBeyondApi.Controllers
 {
@@ -15,21 +14,53 @@ namespace OneBeyondApi.Controllers
         public CatalogueController(ILogger<CatalogueController> logger, ICatalogueRepository catalogueRepository)
         {
             _logger = logger;
-            _catalogueRepository = catalogueRepository;   
+            _catalogueRepository = catalogueRepository;
         }
 
         [HttpGet]
         [Route("GetCatalogue")]
-        public IList<BookStock> Get()
+        [ProducesResponseType(typeof(IList<BookStock>), 200)]
+        [ProducesResponseType(500)]
+        public ActionResult<IList<BookStock>> Get()
         {
-            return _catalogueRepository.GetCatalogue();
+            _logger.LogInformation($"{nameof(Get)} has been started");
+
+            try
+            {
+                var result = _catalogueRepository.GetCatalogue();
+
+                _logger.LogInformation($"{nameof(Get)} has been finished");
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"{nameof(Get)} has error, message: {ex.Message}");
+                return StatusCode(500, $"Unexpected error occurred: {ex.Message}");
+            }
         }
 
         [HttpPost]
         [Route("SearchCatalogue")]
-        public IList<BookStock> Post(CatalogueSearch search)
+        [ProducesResponseType(typeof(Guid), 200)]
+        [ProducesResponseType(500)]
+        public ActionResult<IList<BookStock>> Post(CatalogueSearch search)
         {
-            return _catalogueRepository.SearchCatalogue(search);
+            _logger.LogInformation($"{nameof(Post)} has been started");
+
+            try
+            {
+                var result = _catalogueRepository.SearchCatalogue(search);
+
+                _logger.LogInformation($"{nameof(Post)} has been finished");
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"{nameof(Post)} has error, message: {ex.Message}");
+                return StatusCode(500, $"Unexpected error occurred: {ex.Message}");
+            }
         }
     }
 }

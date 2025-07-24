@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using OneBeyondApi.DataAccess;
 using OneBeyondApi.Model;
-using System.Collections;
 
 namespace OneBeyondApi.Controllers
 {
@@ -15,21 +14,54 @@ namespace OneBeyondApi.Controllers
         public BorrowerController(ILogger<BorrowerController> logger, IBorrowerRepository borrowerRepository)
         {
             _logger = logger;
-            _borrowerRepository = borrowerRepository;   
+            _borrowerRepository = borrowerRepository;
         }
 
         [HttpGet]
         [Route("GetBorrowers")]
-        public IList<Borrower> Get()
+        [ProducesResponseType(typeof(IList<Borrower>), 200)]
+        [ProducesResponseType(500)]
+        public ActionResult<IList<Borrower>> Get()
         {
-            return _borrowerRepository.GetBorrowers();
+            _logger.LogInformation($"{nameof(Get)} has been started");
+
+            try
+            {
+                var result = _borrowerRepository.GetBorrowers();
+
+                _logger.LogInformation($"{nameof(Get)} has been finished");
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"{nameof(Get)} has error, message: {ex.Message}");
+                return StatusCode(500, $"Unexpected error occurred: {ex.Message}");
+            }
+
         }
 
         [HttpPost]
         [Route("AddBorrower")]
-        public Guid Post(Borrower borrower)
+        [ProducesResponseType(typeof(Guid), 200)]
+        [ProducesResponseType(500)]
+        public ActionResult<Guid> Post(Borrower borrower)
         {
-            return _borrowerRepository.AddBorrower(borrower);
+            _logger.LogInformation($"{nameof(Post)} has been started");
+
+            try
+            {
+                var result = _borrowerRepository.AddBorrower(borrower);
+
+                _logger.LogInformation($"{nameof(Get)} has been finished");
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"{nameof(Get)} has error, message: {ex.Message}");
+                return StatusCode(500, $"Unexpected error occurred: {ex.Message}");
+            }
         }
     }
 }

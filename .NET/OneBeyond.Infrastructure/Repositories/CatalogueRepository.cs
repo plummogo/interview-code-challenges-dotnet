@@ -1,47 +1,82 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using OneBeyondApi.Model;
 
 namespace OneBeyondApi.DataAccess
 {
     public class CatalogueRepository : ICatalogueRepository
     {
-        public CatalogueRepository()
+        private readonly ILogger<ICatalogueRepository> _logger;
+        private readonly LibraryContext _context;
+
+        public CatalogueRepository(ILogger<ICatalogueRepository> logger, LibraryContext context)
         {
+            _logger = logger;
+            _context = context;
         }
+
         public List<BookStock> GetCatalogue()
         {
-            using (var context = new LibraryContext())
+            _logger.LogInformation($"{nameof(GetCatalogue)} has been started");
+
+            try
             {
-                var list = context.Catalogue
-                    .Include(x => x.Book)
-                    .ThenInclude(x => x.Author)
-                    .Include(x => x.OnLoanTo)
-                    .ToList();
-                return list;
+                var result = _context.Catalogue
+                                    .Include(x => x.Book)
+                                    .ThenInclude(x => x.Author)
+                                    .Include(x => x.OnLoanTo)
+                                    .ToList();
+
+                _logger.LogInformation($"{nameof(GetCatalogue)} has been finished with count: {result.Count}");
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"{nameof(GetCatalogue)} has error, message: {ex.Message}");
+                throw new Exception($"Unexpected error occurred: {ex.Message}", ex);
             }
         }
 
         public List<BookStock> SearchCatalogue(CatalogueSearch search)
         {
-            using (var context = new LibraryContext())
-            {
-                var list = context.Catalogue
-                    .Include(x => x.Book)
-                    .ThenInclude(x => x.Author)
-                    .Include(x => x.OnLoanTo)
-                    .AsQueryable();
+            _logger.LogInformation($"{nameof(SearchCatalogue)} has been started");
 
-                if (search != null)
+            try
+            {
+                var result = _context.Catalogue
+                                     .Include(x => x.Book)
+                                     .ThenInclude(x => x.Author)
+                                     .Include(x => x.OnLoanTo)
+                                     .AsQueryable();
+
+                if (search is null || (string.IsNullOrEmpty(search.Author) && string.IsNullOrEmpty(search.BookName)))
                 {
-                    if (!string.IsNullOrEmpty(search.Author)) {
-                        list = list.Where(x => x.Book.Author.Name.Contains(search.Author));
-                    }
-                    if (!string.IsNullOrEmpty(search.BookName)) {
-                        list = list.Where(x => x.Book.Name.Contains(search.BookName));
-                    }
+                    _logger.LogError($"{nameof(SearchCatalogue)} has been finished with no search criteria.");
+                    throw new Exception($"{nameof(SearchCatalogue)} has been finished with no search criteria.");
                 }
-                    
-                return list.ToList();
+
+                result = !string.IsNullOrEmpty(search.Author) 
+                         ? result.Where(x => x.Book.Author.Name.Contains(search.Author)) 
+                         : !string.IsNullOrEmpty(search.BookName) 
+                            ? result.Where(x => x.Book.Name.Contains(search.BookName))
+                            : null;
+
+                if (result is null)
+                {
+                    _logger.LogError($"{nameof(SearchCatalogue)} has been finished with no result.");
+                    throw new Exception($"{nameof(SearchCatalogue)} has been finished with no result.");
+                }
+
+                _logger.LogInformation($"{nameof(SearchCatalogue)} has been finished with count: { result.ToList().Count}");
+
+                return result.ToList();
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"{nameof(SearchCatalogue)} has error, message: {ex.Message}");
+                throw new Exception($"Unexpected error occurred: {ex.Message}", ex);
             }
         }
     }

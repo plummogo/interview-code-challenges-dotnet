@@ -1,29 +1,56 @@
-﻿using OneBeyondApi.Model;
+﻿using Microsoft.Extensions.Logging;
+using OneBeyondApi.Model;
 
 namespace OneBeyondApi.DataAccess
 {
     public class BookRepository : IBookRepository
     {
-        public BookRepository()
+        private readonly ILogger<IBookRepository> _logger;
+        private readonly LibraryContext _context;
+
+        public BookRepository(ILogger<IBookRepository> logger, LibraryContext context)
         {
+            _logger = logger;
+            _context = context;
         }
+
         public List<Book> GetBooks()
         {
-            using (var context = new LibraryContext())
+            _logger.LogInformation($"{nameof(GetBooks)} has been started");
+
+            try
             {
-                var list = context.Books
-                    .ToList();
-                return list;
+                var result = _context.Books.ToList();
+
+                _logger.LogInformation($"{nameof(GetBooks)} has been finished with count: {result.Count}");
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"{nameof(GetBooks)} has error, message: {ex.Message}");
+                throw new Exception($"Unexpected error occurred: {ex.Message}", ex);
             }
         }
 
         public Guid AddBook(Book book)
         {
-            using (var context = new LibraryContext())
+            _logger.LogInformation($"{nameof(AddBook)} has been started");
+
+            try
             {
-                context.Books.Add(book);
-                context.SaveChanges();
+                _context.Books.Add(book);
+
+                _context.SaveChanges();
+
+                _logger.LogInformation($"{nameof(AddBook)} has been finished for Id: {book.Id}");
+
                 return book.Id;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"{nameof(AddBook)} has error, message: {ex.Message}");
+                throw new Exception($"Unexpected error occurred: {ex.Message}", ex);
             }
         }
     }
