@@ -4,6 +4,9 @@ using OneBeyondApi.Model;
 
 namespace OneBeyondApi.Controllers
 {
+    /// <summary>
+    /// CatalogueController is responsible for managing the library catalogue.
+    /// </summary>
     [ApiController]
     [Route("[controller]")]
     public class CatalogueController : ControllerBase
@@ -17,6 +20,10 @@ namespace OneBeyondApi.Controllers
             _catalogueRepository = catalogueRepository;
         }
 
+        /// <summary>
+        /// Gets a list of all books in the library catalogue.
+        /// </summary>
+        /// <returns>List of catalogues</returns>
         [HttpGet]
         [Route("GetCatalogue")]
         [ProducesResponseType(typeof(IList<BookStock>), 200)]
@@ -40,6 +47,11 @@ namespace OneBeyondApi.Controllers
             }
         }
 
+        /// <summary>
+        /// Searches the library catalogue based on the provided search criteria.
+        /// </summary>
+        /// <param name="search">Search by either title or author name</param>
+        /// <returns>the found book stock list</returns>
         [HttpPost]
         [Route("SearchCatalogue")]
         [ProducesResponseType(typeof(Guid), 200)]

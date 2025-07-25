@@ -10,6 +10,5 @@ namespace OneBeyondApi.Model
         public Borrower? OnLoanTo { get; set; }
         public ICollection<Book> Books { get; set; } = new List<Book>();
         public ICollection<Reservation> Reservations { get; set; } = new List<Reservation>();
-
     }
 }

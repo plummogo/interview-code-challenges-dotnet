@@ -4,6 +4,9 @@ using OneBeyondApi.Model;
 
 namespace OneBeyondApi.Controllers
 {
+    /// <summary>
+    /// BorrowerController is responsible for managing borrowers in the library system.
+    /// </summary>
     [ApiController]
     [Route("[controller]")]
     public class BorrowerController : ControllerBase
@@ -17,6 +20,10 @@ namespace OneBeyondApi.Controllers
             _borrowerRepository = borrowerRepository;
         }
 
+        /// <summary>
+        /// Gets a list of all borrowers in the library system.
+        /// </summary>
+        /// <returns>List of borrowers</returns>
         [HttpGet]
         [Route("GetBorrowers")]
         [ProducesResponseType(typeof(IList<Borrower>), 200)]
@@ -41,6 +48,11 @@ namespace OneBeyondApi.Controllers
 
         }
 
+        /// <summary>
+        /// Adds a new borrower to the library system.
+        /// </summary>
+        /// <param name="borrower">The borrower what is being saved</param>
+        /// <returns>Newly saved borrower id</returns>
         [HttpPost]
         [Route("AddBorrower")]
         [ProducesResponseType(typeof(Guid), 200)]

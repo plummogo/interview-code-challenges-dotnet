@@ -4,6 +4,9 @@ using OneBeyondApi.Model;
 
 namespace OneBeyondApi.Controllers
 {
+    /// <summary>
+    /// BookController provides endpoints for managing books in the library system.
+    /// </summary>
     [ApiController]
     [Route("[controller]")]
     public class BookController : ControllerBase
@@ -17,6 +20,10 @@ namespace OneBeyondApi.Controllers
             _bookRepository = bookRepository;
         }
 
+        /// <summary>
+        /// Gets a list of all books in the library system.
+        /// </summary>
+        /// <returns>List of books</returns>
         [HttpGet]
         [Route("GetBooks")]
         [ProducesResponseType(typeof(IList<Book>), 200)]
@@ -41,6 +48,11 @@ namespace OneBeyondApi.Controllers
 
         }
 
+        /// <summary>
+        /// Adds a new book to the library system.
+        /// </summary>
+        /// <param name="book">The book what is being saved</param>
+        /// <returns>Newly added book id</returns>
         [HttpPost]
         [Route("AddBook")]
         [ProducesResponseType(typeof(Guid), 200)]

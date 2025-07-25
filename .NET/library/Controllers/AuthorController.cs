@@ -4,6 +4,9 @@ using OneBeyondApi.Model;
 
 namespace OneBeyondApi.Controllers
 {
+    /// <summary>
+    /// AuthorController provides endpoints for managing authors in the library system.
+    /// </summary>
     [ApiController]
     [Route("[controller]")]
     public class AuthorController : ControllerBase
@@ -17,6 +20,10 @@ namespace OneBeyondApi.Controllers
             _authorRepository = authorRepository;
         }
 
+        /// <summary>
+        /// Gets a list of all authors in the library system.
+        /// </summary>
+        /// <returns>List of Authors</returns>
         [HttpGet]
         [Route("GetAuthors")]
         [ProducesResponseType(typeof(IList<Author>), 200)]
@@ -40,6 +47,11 @@ namespace OneBeyondApi.Controllers
             }
         }
 
+        /// <summary>
+        /// Adds a new author to the library system.
+        /// </summary>
+        /// <param name="author">The author what is being saved</param>
+        /// <returns>Newly added autheor id</returns>
         [HttpPost]
         [Route("AddAuthor")]
         [ProducesResponseType(typeof(Guid), 200)]
